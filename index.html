@@ -186,6 +186,23 @@
     flex-shrink: 0;
   }
 
+  .tabs-wrap {
+    position: relative;
+    overflow: hidden;
+    border-radius: 999px;
+    max-width: 60vw;
+  }
+  .tabs-wrap::before, .tabs-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 16px;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .tabs-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg-card), transparent); }
+  .tabs-wrap::after { right: 0; background: linear-gradient(270deg, var(--bg-card), transparent); }
+
   .tabs {
     display: flex;
     gap: 4px;
@@ -195,7 +212,7 @@
     border: 1px solid var(--border);
     overflow-x: auto;
     scrollbar-width: none;
-    max-width: 60vw;
+    max-width: 100%;
   }
   .tabs::-webkit-scrollbar { display: none; }
 
@@ -828,6 +845,53 @@
   .soc-card .btn { margin-top: 18px; }
 
   /* ============================================================
+     SOBRE
+     ============================================================ */
+  .about-card {
+    padding: 26px;
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+  .about-card .about-text {
+    margin: 10px 0 16px;
+    color: var(--text-2);
+    font-size: 15px;
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+
+  /* ============================================================
+     PIPQ TV
+     ============================================================ */
+  .tv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .tv-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 26px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text-1);
+    transition: 0.2s ease;
+  }
+  .tv-card:hover { transform: translateY(-2px); }
+  .tv-card i { font-size: 30px; margin-bottom: 6px; }
+  .tv-card h3 { margin: 0; font-family: var(--font-display); font-size: 19px; }
+  .tv-card p { margin: 0; color: var(--text-3); font-size: 13.5px; }
+  .tv-card.tv-youtube { background: linear-gradient(135deg, rgba(255,0,0,0.14), var(--bg-card)); }
+  .tv-card.tv-youtube i { color: #ff3b30; }
+  .tv-card.tv-instagram { background: linear-gradient(135deg, rgba(214,69,151,0.14), var(--bg-card)); }
+  .tv-card.tv-instagram i { color: #d64597; }
+
+
+  /* ============================================================
      ELEMENTOS DE ADMINISTRADOR
      ============================================================ */
   .admin-only { display: none !important; }
@@ -1065,7 +1129,7 @@
 
   @media (max-width: 640px) {
     .brand span.brand-text { display: none; }
-    .tabs { max-width: 42vw; }
+    .tabs-wrap { max-width: 42vw; }
     .schedule-row { flex-wrap: wrap; }
     .schedule-row .time { margin-left: auto; }
     .cal-header { justify-content: center; }
@@ -1086,7 +1150,7 @@
       muted
       playsinline
       preload="metadata">
-      <source src="./assets/fundo-video.mp4" type="video/mp4" />
+      <source src="fundo-video.mp4" type="video/mp4" />
     </video>
     <img src="./assets/logo-fundo.jpeg" class="bg-logo" alt="" />
   </div>
@@ -1097,17 +1161,23 @@
   <header class="topbar">
     <div class="brand">
       <span class="mark"><i class="fa-solid fa-cross"></i></span>
-      <span class="brand-text">1ª Presbiteriana&nbsp;Queimados</span>
+      <span class="brand-text">PIPQ</span>
     </div>
 
-    <nav class="tabs" role="tablist" aria-label="Seções do site">
-      <button class="tab active" role="tab" aria-selected="true" data-view="inicio">Início</button>
-      <button class="tab" role="tab" aria-selected="false" data-view="biblia">Bíblia</button>
-      <button class="tab" role="tab" aria-selected="false" data-view="hinario">Hinário</button>
-      <button class="tab" role="tab" aria-selected="false" data-view="calendario">Calendário</button>
-      <button class="tab" role="tab" aria-selected="false" data-view="sociedades">Sociedades</button>
-      <button class="tab" role="tab" aria-selected="false" data-view="contato">Contato</button>
-    </nav>
+    <div class="tabs-wrap">
+      <nav class="tabs" role="tablist" aria-label="Seções do site">
+        <button class="tab active" role="tab" aria-selected="true" data-view="inicio">Início</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="sobre">Sobre</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="biblia">Bíblia</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="hinario">Hinário</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="calendario">Calendário</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="sociedades">Sociedades</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="estudo-biblico">Estudo Bíblico</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="culto-oracao">Culto de Oração</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="pipqtv">PIPQ TV</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="contato">Contato</button>
+      </nav>
+    </div>
 
     <div class="topbar-actions">
       <button class="icon-btn" id="btnAdmin" aria-label="Entrar como administrador" title="Painel do administrador">
@@ -1126,7 +1196,7 @@
          ============================================================ -->
     <section class="view active" id="view-inicio">
       <div class="hero">
-        <span class="eyebrow"><i class="fa-solid fa-church"></i> Igreja Presbiteriana · Queimados, RJ</span>
+        <span class="eyebrow"><i class="fa-solid fa-church"></i> Primeira Igreja Presbiteriana em Queimados, RJ</span>
         <h1>Uma comunidade de fé,<br><em>fundamentada na Palavra</em></h1>
         <p class="lede">
           Seja bem-vindo. Aqui você encontra os horários de culto, o hinário, a Bíblia
@@ -1145,6 +1215,11 @@
       </div>
 
       <div class="grid">
+        <button class="card" data-view="sobre">
+          <span class="ic"><i class="fa-solid fa-church"></i></span>
+          <h3>Sobre</h3>
+          <p>Quem somos e no que cremos.</p>
+        </button>
         <button class="card" data-view="biblia">
           <span class="ic"><i class="fa-solid fa-book-bible"></i></span>
           <h3>Bíblia</h3>
@@ -1164,6 +1239,21 @@
           <span class="ic gold"><i class="fa-solid fa-people-group"></i></span>
           <h3>Sociedades</h3>
           <p>UCP, UPA, UMP, UPH e SAF.</p>
+        </button>
+        <button class="card" data-view="estudo-biblico">
+          <span class="ic"><i class="fa-solid fa-book-open-reader"></i></span>
+          <h3>Estudo Bíblico</h3>
+          <p>Temática e assuntos do estudo.</p>
+        </button>
+        <button class="card" data-view="culto-oracao">
+          <span class="ic"><i class="fa-solid fa-hands-praying"></i></span>
+          <h3>Culto de Oração</h3>
+          <p>Temática do mês e motivos de oração.</p>
+        </button>
+        <button class="card" data-view="pipqtv">
+          <span class="ic gold"><i class="fa-brands fa-youtube"></i></span>
+          <h3>PIPQ TV</h3>
+          <p>YouTube e Instagram ao vivo.</p>
         </button>
         <button class="card" data-view="contato">
           <span class="ic"><i class="fa-solid fa-hands-praying"></i></span>
@@ -1326,6 +1416,147 @@
       </div>
 
       <div class="schedule" id="socAgendaList"></div>
+    </section>
+
+    <!-- ============================================================
+         SOBRE
+         ============================================================ -->
+    <section class="view" id="view-sobre">
+      <div class="section-head">
+        <h2>Sobre</h2>
+        <p>Quem somos e aquilo em que cremos.</p>
+      </div>
+
+      <div class="admin-banner">
+        <i class="fa-solid fa-user-shield"></i>
+        Modo administrador — você pode editar os textos desta página.
+        <button id="btnSairAdminSobre">Sair</button>
+      </div>
+
+      <article class="about-card">
+        <span class="soc-kicker">Quem somos</span>
+        <p id="textoQuemSomos" class="about-text"></p>
+        <button class="btn btn-ghost admin-only" id="btnEditarQuemSomos"><i class="fa-solid fa-pen"></i> Editar</button>
+      </article>
+
+      <article class="about-card" style="margin-top:22px;">
+        <span class="soc-kicker">No que cremos</span>
+        <p id="textoNoQueCremos" class="about-text"></p>
+        <button class="btn btn-ghost admin-only" id="btnEditarNoQueCremos"><i class="fa-solid fa-pen"></i> Editar</button>
+      </article>
+    </section>
+
+    <!-- ============================================================
+         ESTUDO BÍBLICO
+         ============================================================ -->
+    <section class="view" id="view-estudo-biblico">
+      <div class="section-head">
+        <h2>Estudo Bíblico</h2>
+        <p>Temática e assuntos abordados em cada estudo.</p>
+      </div>
+
+      <div class="admin-banner">
+        <i class="fa-solid fa-user-shield"></i>
+        Modo administrador — você pode adicionar, editar e remover temas de estudo.
+        <button id="btnSairAdminEstudo">Sair</button>
+      </div>
+
+      <button class="btn btn-primary admin-only" id="btnNovoTemaEstudo" style="margin-bottom:18px;">
+        <i class="fa-solid fa-plus"></i> Novo tema
+      </button>
+
+      <div class="hymn-list" id="temaEstudoList"></div>
+    </section>
+
+    <!-- ============================================================
+         LEITURA DE UM TEMA DE ESTUDO BÍBLICO
+         ============================================================ -->
+    <section class="view" id="view-tema-estudo-leitura">
+      <div class="section-head" style="display:flex; align-items:flex-start; justify-content:space-between; gap:14px;">
+        <div>
+          <button class="btn btn-ghost" id="btnVoltarEstudo" type="button" style="margin-bottom:14px;">
+            <i class="fa-solid fa-chevron-left"></i> Voltar ao estudo bíblico
+          </button>
+          <h2 id="temaEstudoLeituraTitulo">Título do tema</h2>
+          <p id="temaEstudoLeituraData" style="margin-top:-6px;"></p>
+        </div>
+        <button class="btn btn-ghost admin-only" id="btnEditarTemaEstudo"><i class="fa-solid fa-pen"></i> Editar</button>
+      </div>
+
+      <article class="reader-box" id="temaEstudoLeituraTexto"></article>
+    </section>
+
+    <!-- ============================================================
+         CULTO DE ORAÇÃO
+         ============================================================ -->
+    <section class="view" id="view-culto-oracao">
+      <div class="section-head">
+        <h2>Culto de Oração</h2>
+        <p>Temática do mês e motivos de oração.</p>
+      </div>
+
+      <div class="admin-banner">
+        <i class="fa-solid fa-user-shield"></i>
+        Modo administrador — você pode adicionar, editar e remover temas de oração.
+        <button id="btnSairAdminOracao">Sair</button>
+      </div>
+
+      <button class="btn btn-primary admin-only" id="btnNovoTemaOracao" style="margin-bottom:18px;">
+        <i class="fa-solid fa-plus"></i> Novo tema
+      </button>
+
+      <div class="hymn-list" id="temaOracaoList"></div>
+    </section>
+
+    <!-- ============================================================
+         LEITURA DE UM TEMA DE CULTO DE ORAÇÃO
+         ============================================================ -->
+    <section class="view" id="view-tema-oracao-leitura">
+      <div class="section-head" style="display:flex; align-items:flex-start; justify-content:space-between; gap:14px;">
+        <div>
+          <button class="btn btn-ghost" id="btnVoltarOracao" type="button" style="margin-bottom:14px;">
+            <i class="fa-solid fa-chevron-left"></i> Voltar ao culto de oração
+          </button>
+          <h2 id="temaOracaoLeituraTitulo">Título do tema</h2>
+          <p id="temaOracaoLeituraData" style="margin-top:-6px;"></p>
+        </div>
+        <button class="btn btn-ghost admin-only" id="btnEditarTemaOracao"><i class="fa-solid fa-pen"></i> Editar</button>
+      </div>
+
+      <article class="reader-box" id="temaOracaoLeituraTexto"></article>
+    </section>
+
+    <!-- ============================================================
+         PIPQ TV
+         ============================================================ -->
+    <section class="view" id="view-pipqtv">
+      <div class="section-head">
+        <h2>PIPQ TV</h2>
+        <p>Acompanhe nossos cultos e conteúdos pelo YouTube e Instagram.</p>
+      </div>
+
+      <div class="admin-banner">
+        <i class="fa-solid fa-user-shield"></i>
+        Modo administrador — você pode atualizar os links dos canais.
+        <button id="btnSairAdminTv">Sair</button>
+      </div>
+
+      <div class="tv-grid">
+        <a class="tv-card tv-youtube" id="linkYoutube" target="_blank" rel="noopener">
+          <i class="fa-brands fa-youtube"></i>
+          <h3>YouTube</h3>
+          <p>Cultos completos e mensagens.</p>
+        </a>
+        <a class="tv-card tv-instagram" id="linkInstagram" target="_blank" rel="noopener">
+          <i class="fa-brands fa-instagram"></i>
+          <h3>Instagram</h3>
+          <p>Transmissões ao vivo e bastidores.</p>
+        </a>
+      </div>
+
+      <button class="btn btn-ghost admin-only" id="btnEditarPipqTv" style="margin-top:22px;">
+        <i class="fa-solid fa-pen"></i> Editar links
+      </button>
     </section>
 
     <!-- ============================================================
@@ -1627,6 +1858,100 @@
     </div>
   </div>
 
+  <!-- ============================================================
+       MODAL — EDITAR TEXTO DE "SOBRE"
+       ============================================================ -->
+  <div class="modal" id="sobreModal" role="dialog" aria-modal="true" aria-labelledby="sobreTitulo">
+    <div class="modal-header">
+      <div>
+        <span class="kicker">Sobre</span>
+        <h2 id="sobreTitulo">Editar texto</h2>
+      </div>
+      <button class="modal-close" id="btnCloseSobre" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="formSobre">
+        <input type="hidden" id="sobreCampo" />
+        <div class="form-field">
+          <label for="sobreTexto" id="sobreTextoLabel">Texto</label>
+          <textarea id="sobreTexto" rows="8"></textarea>
+        </div>
+        <div class="form-error" id="sobreErro"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn-text" id="btnCancelarSobre">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSalvarSobre">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL — NOVO/EDITAR TEMA (Estudo Bíblico ou Culto de Oração)
+       ============================================================ -->
+  <div class="modal" id="temaModal" role="dialog" aria-modal="true" aria-labelledby="temaTitulo">
+    <div class="modal-header">
+      <div>
+        <span class="kicker" id="temaKicker">Estudo Bíblico</span>
+        <h2 id="temaTitulo">Novo tema</h2>
+      </div>
+      <button class="modal-close" id="btnCloseTema" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="formTema">
+        <input type="hidden" id="temaId" />
+        <input type="hidden" id="temaTipo" />
+        <div class="form-field">
+          <label for="temaMes">Mês de referência</label>
+          <input type="month" id="temaMes" required />
+        </div>
+        <div class="form-field">
+          <label for="temaTituloInput" id="temaTituloLabel">Título / temática</label>
+          <input type="text" id="temaTituloInput" placeholder="Ex.: A graça de Deus em nossas vidas" required />
+        </div>
+        <div class="form-field">
+          <label for="temaConteudo" id="temaConteudoLabel">Assuntos abordados</label>
+          <textarea id="temaConteudo" rows="6" placeholder="Descreva os assuntos, textos bíblicos e observações deste tema…"></textarea>
+        </div>
+        <div class="form-error" id="temaErro"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn-text danger admin-only" id="btnExcluirTema" style="margin-right:auto; color:#e0654f;">Excluir</button>
+          <button type="button" class="btn-text" id="btnCancelarTema">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSalvarTema">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL — EDITAR LINKS DA PIPQ TV
+       ============================================================ -->
+  <div class="modal" id="pipqtvModal" role="dialog" aria-modal="true" aria-labelledby="pipqtvTitulo">
+    <div class="modal-header">
+      <div>
+        <span class="kicker">PIPQ TV</span>
+        <h2 id="pipqtvTitulo">Editar links</h2>
+      </div>
+      <button class="modal-close" id="btnClosePipqTv" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="formPipqTv">
+        <div class="form-field">
+          <label for="pipqtvYoutube">Link do YouTube</label>
+          <input type="url" id="pipqtvYoutube" placeholder="https://www.youtube.com/@..." required />
+        </div>
+        <div class="form-field">
+          <label for="pipqtvInstagram">Link do Instagram</label>
+          <input type="url" id="pipqtvInstagram" placeholder="https://www.instagram.com/..." required />
+        </div>
+        <div class="form-error" id="pipqtvErro"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn-text" id="btnCancelarPipqTv">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnSalvarPipqTv">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script type="module">
   import * as AppData from './app-data.js';
 
@@ -1679,6 +2004,10 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (name === 'calendario') garantirCalendarioCarregado();
     if (name === 'sociedades') garantirSociedadesCarregadas();
+    if (name === 'sobre') garantirSobreCarregado();
+    if (name === 'estudo-biblico') garantirTemasCarregados('estudo');
+    if (name === 'culto-oracao') garantirTemasCarregados('oracao');
+    if (name === 'pipqtv') garantirPipqTvCarregado();
   }
 
   document.querySelectorAll('[data-view]').forEach(el => {
@@ -1768,8 +2097,8 @@
     }
   });
 
-  document.getElementById('btnSairAdminCal')?.addEventListener('click', () => AppData.logout().then(() => setModoAdmin(null)));
-  document.getElementById('btnSairAdminSoc')?.addEventListener('click', () => AppData.logout().then(() => setModoAdmin(null)));
+  document.querySelectorAll('#btnSairAdminCal, #btnSairAdminSoc, #btnSairAdminSobre, #btnSairAdminEstudo, #btnSairAdminOracao, #btnSairAdminTv')
+    .forEach(btn => btn.addEventListener('click', () => AppData.logout().then(() => setModoAdmin(null))));
 
   document.getElementById('btnTemaEscuro').addEventListener('click', () => { settings.theme = 'dark'; applySettings(); saveSettings(settings); });
   document.getElementById('btnTemaClaro').addEventListener('click', () => { settings.theme = 'light'; applySettings(); saveSettings(settings); });
@@ -2406,6 +2735,262 @@
       : 'Olá! Gostaria de compartilhar um pedido de oração.';
     const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`;
     window.open(url, '_blank', 'noopener');
+  });
+
+  /* ==================================================================
+     SOBRE — "Quem Somos" e "No Que Cremos"
+     ================================================================== */
+  let sobreAtual = null;
+
+  async function carregarSobre() {
+    sobreAtual = await AppData.getSobre();
+    document.getElementById('textoQuemSomos').textContent = sobreAtual.quemSomos || '';
+    document.getElementById('textoNoQueCremos').textContent = sobreAtual.noQueCremos || '';
+  }
+
+  let sobreCarregado = false;
+  function garantirSobreCarregado() {
+    if (sobreCarregado) return;
+    sobreCarregado = true;
+    carregarSobre();
+  }
+
+  const sobreModal = document.getElementById('sobreModal');
+
+  function abrirEditarSobre(campo) {
+    const labels = { quemSomos: 'Quem somos', noQueCremos: 'No que cremos' };
+    document.getElementById('sobreTitulo').textContent = 'Editar — ' + labels[campo];
+    document.getElementById('sobreTextoLabel').textContent = labels[campo];
+    document.getElementById('sobreCampo').value = campo;
+    document.getElementById('sobreTexto').value = (sobreAtual && sobreAtual[campo]) || '';
+    document.getElementById('sobreErro').textContent = '';
+    openModal(sobreModal);
+  }
+
+  document.getElementById('btnEditarQuemSomos').addEventListener('click', () => abrirEditarSobre('quemSomos'));
+  document.getElementById('btnEditarNoQueCremos').addEventListener('click', () => abrirEditarSobre('noQueCremos'));
+  document.getElementById('btnCloseSobre').addEventListener('click', closeModal);
+  document.getElementById('btnCancelarSobre').addEventListener('click', closeModal);
+
+  document.getElementById('formSobre').addEventListener('submit', async e => {
+    e.preventDefault();
+    const erro = document.getElementById('sobreErro');
+    erro.textContent = '';
+    const campo = document.getElementById('sobreCampo').value;
+    const texto = document.getElementById('sobreTexto').value.trim();
+    try {
+      await AppData.salvarSobre({ [campo]: texto });
+      closeModal();
+      await carregarSobre();
+    } catch (err) {
+      erro.textContent = err.message || 'Não foi possível salvar. Tente novamente.';
+    }
+  });
+
+  /* ==================================================================
+     TEMAS — Estudo Bíblico e Culto de Oração
+     As duas seções compartilham a mesma lógica; o que muda é o
+     "tipo" ('estudo' ou 'oracao') e os elementos do DOM usados.
+     ================================================================== */
+  const TIPOS_TEMA = {
+    estudo: {
+      listaId: 'temaEstudoList', vazioMsg: 'Nenhum tema de estudo cadastrado ainda.',
+      leituraView: 'tema-estudo-leitura', tituloId: 'temaEstudoLeituraTitulo', dataId: 'temaEstudoLeituraData',
+      textoId: 'temaEstudoLeituraTexto', voltarView: 'estudo-biblico', editarBtnId: 'btnEditarTemaEstudo',
+      kicker: 'Estudo Bíblico', tituloLabel: 'Título / temática', conteudoLabel: 'Assuntos abordados',
+      conteudoPlaceholder: 'Descreva os assuntos, textos bíblicos e observações deste tema…',
+    },
+    oracao: {
+      listaId: 'temaOracaoList', vazioMsg: 'Nenhum tema de oração cadastrado ainda.',
+      leituraView: 'tema-oracao-leitura', tituloId: 'temaOracaoLeituraTitulo', dataId: 'temaOracaoLeituraData',
+      textoId: 'temaOracaoLeituraTexto', voltarView: 'culto-oracao', editarBtnId: 'btnEditarTemaOracao',
+      kicker: 'Culto de Oração', tituloLabel: 'Temática do mês', conteudoLabel: 'Motivos de oração',
+      conteudoPlaceholder: 'Liste os motivos de oração deste mês…',
+    },
+  };
+
+  const temasCache = { estudo: [], oracao: [] };
+
+  function formatMesAno(mesIso) {
+    if (!mesIso) return '';
+    const [ano, mes] = mesIso.split('-');
+    return MESES[parseInt(mes, 10) - 1] + ' de ' + ano;
+  }
+
+  function renderTemaList(tipo) {
+    const cfg = TIPOS_TEMA[tipo];
+    const lista = temasCache[tipo];
+    const container = document.getElementById(cfg.listaId);
+    if (!lista.length) {
+      container.innerHTML = `<div class="empty-state">${cfg.vazioMsg}</div>`;
+      return;
+    }
+    container.innerHTML = lista.map(t => `
+      <div class="hymn-row" tabindex="0" data-id="${t.id}" role="button">
+        <span class="title" style="flex:1;"><strong>${t.titulo}</strong><br><span class="muted" style="font-size:12px;">${formatMesAno(t.data)}</span></span>
+        <span class="muted"><i class="fa-solid fa-chevron-right"></i></span>
+      </div>
+    `).join('');
+    container.querySelectorAll('.hymn-row').forEach(row => {
+      const open = () => abrirLeituraTema(tipo, row.dataset.id);
+      row.addEventListener('click', open);
+      row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
+  }
+
+  async function carregarTemas(tipo) {
+    temasCache[tipo] = await AppData.getTemas(tipo);
+    renderTemaList(tipo);
+  }
+
+  function abrirLeituraTema(tipo, id) {
+    const cfg = TIPOS_TEMA[tipo];
+    const tema = temasCache[tipo].find(t => t.id === id);
+    if (!tema) return;
+    document.getElementById(cfg.tituloId).textContent = tema.titulo;
+    document.getElementById(cfg.dataId).textContent = formatMesAno(tema.data);
+    const corpo = document.getElementById(cfg.textoId);
+    const paragrafos = (tema.conteudo || '').split(/\n\s*\n/).filter(s => s.trim());
+    corpo.innerHTML = paragrafos.length
+      ? paragrafos.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')
+      : '<div class="empty-state">Sem conteúdo cadastrado para este tema.</div>';
+    document.getElementById(cfg.editarBtnId).dataset.tipo = tipo;
+    document.getElementById(cfg.editarBtnId).dataset.id = id;
+    goToView(cfg.leituraView);
+  }
+
+  document.getElementById('btnVoltarEstudo').addEventListener('click', () => goToView('estudo-biblico'));
+  document.getElementById('btnVoltarOracao').addEventListener('click', () => goToView('culto-oracao'));
+
+  const temasCarregados = { estudo: false, oracao: false };
+  function garantirTemasCarregados(tipo) {
+    if (temasCarregados[tipo]) return;
+    temasCarregados[tipo] = true;
+    carregarTemas(tipo);
+  }
+
+  /* ----- formulário de tema (criar / editar / excluir) ----- */
+  const temaModal = document.getElementById('temaModal');
+
+  function abrirNovoTema(tipo) {
+    const cfg = TIPOS_TEMA[tipo];
+    document.getElementById('temaKicker').textContent = cfg.kicker;
+    document.getElementById('temaTitulo').textContent = 'Novo tema';
+    document.getElementById('temaTituloLabel').textContent = cfg.tituloLabel;
+    document.getElementById('temaConteudoLabel').textContent = cfg.conteudoLabel;
+    document.getElementById('temaConteudo').placeholder = cfg.conteudoPlaceholder;
+    document.getElementById('formTema').reset();
+    document.getElementById('temaId').value = '';
+    document.getElementById('temaTipo').value = tipo;
+    document.getElementById('temaErro').textContent = '';
+    document.getElementById('btnExcluirTema').style.display = 'none';
+    openModal(temaModal);
+  }
+
+  function abrirEditarTema(tipo, id) {
+    const cfg = TIPOS_TEMA[tipo];
+    const tema = temasCache[tipo].find(t => t.id === id);
+    if (!tema) return;
+    document.getElementById('temaKicker').textContent = cfg.kicker;
+    document.getElementById('temaTitulo').textContent = 'Editar tema';
+    document.getElementById('temaTituloLabel').textContent = cfg.tituloLabel;
+    document.getElementById('temaConteudoLabel').textContent = cfg.conteudoLabel;
+    document.getElementById('temaId').value = tema.id;
+    document.getElementById('temaTipo').value = tipo;
+    document.getElementById('temaMes').value = tema.data || '';
+    document.getElementById('temaTituloInput').value = tema.titulo || '';
+    document.getElementById('temaConteudo').value = tema.conteudo || '';
+    document.getElementById('temaErro').textContent = '';
+    document.getElementById('btnExcluirTema').style.display = 'inline-flex';
+    openModal(temaModal);
+  }
+
+  document.getElementById('btnNovoTemaEstudo').addEventListener('click', () => abrirNovoTema('estudo'));
+  document.getElementById('btnNovoTemaOracao').addEventListener('click', () => abrirNovoTema('oracao'));
+  document.getElementById('btnEditarTemaEstudo').addEventListener('click', e => abrirEditarTema(e.currentTarget.dataset.tipo, e.currentTarget.dataset.id));
+  document.getElementById('btnEditarTemaOracao').addEventListener('click', e => abrirEditarTema(e.currentTarget.dataset.tipo, e.currentTarget.dataset.id));
+  document.getElementById('btnCloseTema').addEventListener('click', closeModal);
+  document.getElementById('btnCancelarTema').addEventListener('click', closeModal);
+
+  document.getElementById('formTema').addEventListener('submit', async e => {
+    e.preventDefault();
+    const erro = document.getElementById('temaErro');
+    erro.textContent = '';
+    const tipo = document.getElementById('temaTipo').value;
+    const tema = {
+      id: document.getElementById('temaId').value || null,
+      data: document.getElementById('temaMes').value,
+      titulo: document.getElementById('temaTituloInput').value.trim(),
+      conteudo: document.getElementById('temaConteudo').value.trim(),
+    };
+    try {
+      await AppData.salvarTema(tipo, tema);
+      closeModal();
+      await carregarTemas(tipo);
+      goToView(TIPOS_TEMA[tipo].voltarView);
+    } catch (err) {
+      erro.textContent = err.message || 'Não foi possível salvar. Tente novamente.';
+    }
+  });
+
+  document.getElementById('btnExcluirTema').addEventListener('click', async () => {
+    const id = document.getElementById('temaId').value;
+    const tipo = document.getElementById('temaTipo').value;
+    if (!id) return;
+    if (!confirm('Tem certeza que deseja excluir este tema?')) return;
+    try {
+      await AppData.excluirTema(id);
+      closeModal();
+      await carregarTemas(tipo);
+      goToView(TIPOS_TEMA[tipo].voltarView);
+    } catch (err) {
+      document.getElementById('temaErro').textContent = err.message || 'Não foi possível excluir.';
+    }
+  });
+
+  /* ==================================================================
+     PIPQ TV
+     ================================================================== */
+  async function carregarPipqTv() {
+    const dados = await AppData.getPipqTv();
+    document.getElementById('linkYoutube').href = dados.youtube || '#';
+    document.getElementById('linkInstagram').href = dados.instagram || '#';
+  }
+
+  let pipqTvCarregado = false;
+  function garantirPipqTvCarregado() {
+    if (pipqTvCarregado) return;
+    pipqTvCarregado = true;
+    carregarPipqTv();
+  }
+
+  const pipqtvModal = document.getElementById('pipqtvModal');
+
+  document.getElementById('btnEditarPipqTv').addEventListener('click', async () => {
+    const dados = await AppData.getPipqTv();
+    document.getElementById('pipqtvYoutube').value = dados.youtube || '';
+    document.getElementById('pipqtvInstagram').value = dados.instagram || '';
+    document.getElementById('pipqtvErro').textContent = '';
+    openModal(pipqtvModal);
+  });
+  document.getElementById('btnClosePipqTv').addEventListener('click', closeModal);
+  document.getElementById('btnCancelarPipqTv').addEventListener('click', closeModal);
+
+  document.getElementById('formPipqTv').addEventListener('submit', async e => {
+    e.preventDefault();
+    const erro = document.getElementById('pipqtvErro');
+    erro.textContent = '';
+    const dados = {
+      youtube: document.getElementById('pipqtvYoutube').value.trim(),
+      instagram: document.getElementById('pipqtvInstagram').value.trim(),
+    };
+    try {
+      await AppData.salvarPipqTv(dados);
+      closeModal();
+      await carregarPipqTv();
+    } catch (err) {
+      erro.textContent = err.message || 'Não foi possível salvar. Tente novamente.';
+    }
   });
 
   /* ==================================================================

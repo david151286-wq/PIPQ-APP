@@ -11,7 +11,7 @@
    navegador a buscar tudo de novo e atualizar o cache.
    ================================================================== */
 
-const CACHE_VERSION = 'pipq-cache-v3';
+const CACHE_VERSION = 'pipq-cache-v4';
 
 const CORE_ASSETS = [
   './',

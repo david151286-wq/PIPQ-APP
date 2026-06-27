@@ -1,20 +1,10 @@
-/* ==================================================================
-   APP DATA — ponte entre o site e o Firebase.
-   ------------------------------------------------------------------
-   Este arquivo cuida de 3 coisas:
-   1) Conectar no Firebase (se as chaves já estiverem configuradas)
-   2) Login/logout do administrador
-   3) Ler e gravar: eventos do calendário, sociedades e horários de culto
 
-   Se o Firebase ainda não estiver configurado (veja firebase-config.js),
-   o site continua funcionando normalmente com os dados de EXEMPLO
-   definidos mais abaixo — só a edição fica bloqueada.
-   ================================================================== */
 
 import { firebaseConfig, FIREBASE_CONFIGURADO } from './firebase-config.js';
 
 let app = null, db = null, auth = null;
 let firebaseModules = null;
+let erroConexao = null;
 
 async function initFirebase() {
   if (!FIREBASE_CONFIGURADO) return false;
@@ -32,8 +22,14 @@ async function initFirebase() {
     return true;
   } catch (err) {
     console.warn('Não foi possível conectar ao Firebase — usando dados de exemplo.', err);
+    erroConexao = err;
     return false;
   }
+}
+
+function mensagemFalhaFirebase() {
+  if (!FIREBASE_CONFIGURADO) return 'Firebase não configurado. Configure as chaves em firebase-config.js para ativar a edição.';
+  return 'Não foi possível conectar ao banco de dados. Verifique sua internet e tente novamente.';
 }
 
 /* ==================================================================
@@ -63,12 +59,25 @@ const EXEMPLO_AGENDA_SOCIEDADE = {
   ucp: [], upa: [], ump: [], uph: [], saf: [],
 };
 
+const EXEMPLO_SOBRE = {
+  quemSomos: 'A Primeira Igreja Presbiteriana em Queimados é uma comunidade de fé reformada, comprometida com a pregação fiel da Palavra de Deus, a vida em comunhão e o serviço ao próximo. Acreditamos que a igreja existe para adorar a Deus, edificar os seus membros e anunciar o evangelho de Jesus Cristo a todas as pessoas.',
+  noQueCremos: 'Cremos nas Escrituras Sagradas como a Palavra inspirada por Deus e a única regra infalível de fé e prática. Cremos em um só Deus, eternamente existente em três pessoas: Pai, Filho e Espírito Santo. Cremos que a salvação é unicamente pela graça de Deus, mediante a fé em Jesus Cristo, que morreu e ressuscitou para o perdão dos nossos pecados.',
+};
+
+const EXEMPLO_TEMAS_ESTUDO = [];
+const EXEMPLO_TEMAS_ORACAO = [];
+
+const EXEMPLO_PIPQTV = {
+  youtube: 'https://www.youtube.com/@igrejaqueimados',
+  instagram: 'https://www.instagram.com/igrejaqueimados',
+};
+
 /* ==================================================================
    LOGIN DE ADMINISTRADOR
    ================================================================== */
 async function login(email, senha) {
   const ok = await initFirebase();
-  if (!ok) throw new Error('Firebase não configurado. Configure as chaves em firebase-config.js para ativar o login.');
+  if (!ok) throw new Error(mensagemFalhaFirebase());
   const { signInWithEmailAndPassword } = firebaseModules;
   const cred = await signInWithEmailAndPassword(auth, email, senha);
   return cred.user;
@@ -108,7 +117,7 @@ async function getEventos() {
 
 async function salvarEvento(evento) {
   const ok = await initFirebase();
-  if (!ok) throw new Error('Firebase não configurado.');
+  if (!ok) throw new Error(mensagemFalhaFirebase());
   const { collection, doc, setDoc, addDoc } = firebaseModules;
   if (evento.id) {
     const ref = doc(db, 'eventos', evento.id);
@@ -123,7 +132,7 @@ async function salvarEvento(evento) {
 
 async function excluirEvento(id) {
   const ok = await initFirebase();
-  if (!ok) throw new Error('Firebase não configurado.');
+  if (!ok) throw new Error(mensagemFalhaFirebase());
   const { doc, deleteDoc } = firebaseModules;
   await deleteDoc(doc(db, 'eventos', id));
 }
@@ -149,7 +158,7 @@ async function getHorarios() {
 
 async function salvarHorario(horario) {
   const ok = await initFirebase();
-  if (!ok) throw new Error('Firebase não configurado.');
+  if (!ok) throw new Error(mensagemFalhaFirebase());
   const { collection, doc, setDoc, addDoc } = firebaseModules;
   if (horario.id) {
     const ref = doc(db, 'horarios', horario.id);
@@ -164,7 +173,7 @@ async function salvarHorario(horario) {
 
 async function excluirHorario(id) {
   const ok = await initFirebase();
-  if (!ok) throw new Error('Firebase não configurado.');
+  if (!ok) throw new Error(mensagemFalhaFirebase());
   const { doc, deleteDoc } = firebaseModules;
   await deleteDoc(doc(db, 'horarios', id));
 }
@@ -192,7 +201,7 @@ async function getSociedadeInfo(sigla) {
 
 async function salvarSociedadeInfo(sigla, dados) {
   const ok = await initFirebase();
-  if (!ok) throw new Error('Firebase não configurado.');
+  if (!ok) throw new Error(mensagemFalhaFirebase());
   const { doc, setDoc } = firebaseModules;
   await setDoc(doc(db, 'sociedades', sigla), dados, { merge: true });
 }
@@ -212,7 +221,7 @@ async function getAgendaSociedade(sigla) {
 
 async function salvarAtividadeSociedade(sigla, atividade) {
   const ok = await initFirebase();
-  if (!ok) throw new Error('Firebase não configurado.');
+  if (!ok) throw new Error(mensagemFalhaFirebase());
   const { collection, doc, setDoc, addDoc } = firebaseModules;
   const dados = { ...atividade, sociedade: sigla };
   if (atividade.id) {
@@ -228,9 +237,105 @@ async function salvarAtividadeSociedade(sigla, atividade) {
 
 async function excluirAtividadeSociedade(id) {
   const ok = await initFirebase();
-  if (!ok) throw new Error('Firebase não configurado.');
+  if (!ok) throw new Error(mensagemFalhaFirebase());
   const { doc, deleteDoc } = firebaseModules;
   await deleteDoc(doc(db, 'sociedades_agenda', id));
+}
+
+/* ==================================================================
+   SOBRE — "Quem Somos" e "No Que Cremos"
+   Documento único em Firestore: coleção "pagina_sobre", doc "principal"
+   Campos: quemSomos, noQueCremos
+   ================================================================== */
+async function getSobre() {
+  const ok = await initFirebase();
+  if (!ok) return EXEMPLO_SOBRE;
+  try {
+    const { doc, getDoc } = firebaseModules;
+    const snap = await getDoc(doc(db, 'pagina_sobre', 'principal'));
+    return snap.exists() ? { ...EXEMPLO_SOBRE, ...snap.data() } : EXEMPLO_SOBRE;
+  } catch (err) {
+    console.warn('Erro ao buscar página Sobre, usando exemplo.', err);
+    return EXEMPLO_SOBRE;
+  }
+}
+
+async function salvarSobre(dados) {
+  const ok = await initFirebase();
+  if (!ok) throw new Error(mensagemFalhaFirebase());
+  const { doc, setDoc } = firebaseModules;
+  await setDoc(doc(db, 'pagina_sobre', 'principal'), dados, { merge: true });
+}
+
+/* ==================================================================
+   TEMAS — Estudo Bíblico e Culto de Oração
+   Documento em Firestore: coleção "temas"
+   Campos: tipo ("estudo" | "oracao"), data ("AAAA-MM"), titulo,
+   conteudo (texto do estudo / motivos de oração)
+   ================================================================== */
+function exemploTemas(tipo) {
+  return tipo === 'oracao' ? EXEMPLO_TEMAS_ORACAO : EXEMPLO_TEMAS_ESTUDO;
+}
+
+async function getTemas(tipo) {
+  const ok = await initFirebase();
+  if (!ok) return exemploTemas(tipo);
+  try {
+    const { collection, getDocs, query, where, orderBy } = firebaseModules;
+    const snap = await getDocs(query(collection(db, 'temas'), where('tipo', '==', tipo), orderBy('data', 'desc')));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.warn('Erro ao buscar temas, usando exemplo.', err);
+    return exemploTemas(tipo);
+  }
+}
+
+async function salvarTema(tipo, tema) {
+  const ok = await initFirebase();
+  if (!ok) throw new Error(mensagemFalhaFirebase());
+  const { collection, doc, setDoc, addDoc } = firebaseModules;
+  const dados = { ...tema, tipo };
+  if (tema.id) {
+    const ref = doc(db, 'temas', tema.id);
+    const { id, ...resto } = dados;
+    await setDoc(ref, resto);
+    return tema.id;
+  } else {
+    const ref = await addDoc(collection(db, 'temas'), dados);
+    return ref.id;
+  }
+}
+
+async function excluirTema(id) {
+  const ok = await initFirebase();
+  if (!ok) throw new Error(mensagemFalhaFirebase());
+  const { doc, deleteDoc } = firebaseModules;
+  await deleteDoc(doc(db, 'temas', id));
+}
+
+/* ==================================================================
+   PIPQ TV — links para YouTube e Instagram
+   Documento único em Firestore: coleção "pipqtv", doc "principal"
+   Campos: youtube, instagram
+   ================================================================== */
+async function getPipqTv() {
+  const ok = await initFirebase();
+  if (!ok) return EXEMPLO_PIPQTV;
+  try {
+    const { doc, getDoc } = firebaseModules;
+    const snap = await getDoc(doc(db, 'pipqtv', 'principal'));
+    return snap.exists() ? { ...EXEMPLO_PIPQTV, ...snap.data() } : EXEMPLO_PIPQTV;
+  } catch (err) {
+    console.warn('Erro ao buscar links da PIPQ TV, usando exemplo.', err);
+    return EXEMPLO_PIPQTV;
+  }
+}
+
+async function salvarPipqTv(dados) {
+  const ok = await initFirebase();
+  if (!ok) throw new Error(mensagemFalhaFirebase());
+  const { doc, setDoc } = firebaseModules;
+  await setDoc(doc(db, 'pipqtv', 'principal'), dados, { merge: true });
 }
 
 export {
@@ -250,4 +355,11 @@ export {
   getAgendaSociedade,
   salvarAtividadeSociedade,
   excluirAtividadeSociedade,
+  getSobre,
+  salvarSobre,
+  getTemas,
+  salvarTema,
+  excluirTema,
+  getPipqTv,
+  salvarPipqTv,
 };
