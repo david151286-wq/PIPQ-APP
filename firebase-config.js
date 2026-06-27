@@ -15,12 +15,12 @@
    ================================================================== */
 
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "SEU_SENDER_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyBSR7_HprEJVLkl6jnyQ7Q5dkfFn39E-Ic",
+  authDomain: "pipq--app.firebaseapp.com",
+  projectId: "pipq--app",
+  storageBucket: "pipq--app.firebasestorage.app",
+  messagingSenderId: "202022101829",
+  appId: "1:202022101829:web:f5aec672193908f63e942c"
 };
 
 // Detecta automaticamente se as chaves ainda são as de exemplo
